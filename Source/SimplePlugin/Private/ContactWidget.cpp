@@ -3,16 +3,45 @@
 #include "SListView.h"
 #include "SBoxPanel.h"
 #include "STreeView.h"
+#include "SComboBox.h"
 #define LOCTEXT_NAMESPACE "ContactWidget"
 
 const FName SContactWidget::GroupColumnName(TEXT("ID"));
 const FName SContactWidget::NameColumnName(TEXT("Frame"));
 const FName SContactWidget::AddressColumnName(TEXT("Type"));
 
+TSharedRef<SWidget> SContactWidget::MakeNameInfoWidget(TSharedPtr<FString> InItem)
+{
+	return SNew(STextBlock)
+		.Text(FText::FromString(*InItem));
+}
+
+void SContactWidget::CreateNameInfoList()
+{
+	NameInfoList.Add(MakeShareable(new FString("AAA")));
+	NameInfoList.Add(MakeShareable(new FString("bbb")));
+	NameInfoList.Add(MakeShareable(new FString("ccc")));
+	NameInfoList.Add(MakeShareable(new FString("dddd")));
+}
+
+FText SContactWidget::GetSelectedNameInfo() const
+{
+	if (NameInfoComboBox->GetSelectedItem().IsValid())
+	{
+		return FText::FromString(*NameInfoComboBox->GetSelectedItem());
+	}
+	else
+	{
+		return LOCTEXT("AutomationRequestedFilterComboLabel", "All Tests");
+	}
+}
+
 void SContactWidget::Construct(const FArguments& InArgs)
 {
 	CreateContactInfoList();
 	CreateQueryInfoList();
+	CreateNameInfoList();
+
 	ChildSlot
 	[
 		SNew(SHorizontalBox)
@@ -52,6 +81,17 @@ void SContactWidget::Construct(const FArguments& InArgs)
 				//			.Text(LOCTEXT("QueryInfoAddress", "Address"))
 				//		]
 				//)
+		]
+		+ SHorizontalBox::Slot()
+		[
+			SAssignNew(NameInfoComboBox, SComboBox<TSharedPtr<FString>>)
+			.ContentPadding(FMargin(6.0f, 2.0f))
+			.OptionsSource(&NameInfoList)
+			.OnGenerateWidget(this, &SContactWidget::MakeNameInfoWidget)
+			[
+				SNew(STextBlock)
+				.Text(this, &SContactWidget::GetSelectedNameInfo)
+			]
 		]
 			
 	];

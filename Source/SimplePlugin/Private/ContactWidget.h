@@ -5,6 +5,7 @@
 #include "Widgets/Views/STableViewBase.h"
 #include "Widgets/Views/STableRow.h"
 #include "ContactInfo.h"
+#include "SComboBox.h"
 
 class  SQueryInfoWidget : public SMultiColumnTableRow< TSharedPtr< FQueryInfo > >
 {
@@ -64,4 +65,12 @@ public:
 	static const FName GroupColumnName;
 	static const FName NameColumnName;
 	static const FName AddressColumnName;
+
+
+	//--------------------
+	TSharedRef<SWidget> MakeNameInfoWidget(TSharedPtr<FString> InItem);
+	TArray<TSharedPtr<FString>> NameInfoList;
+	void CreateNameInfoList();
+	FText GetSelectedNameInfo() const;
+	TSharedPtr< SComboBox< TSharedPtr<FString> > >	NameInfoComboBox;
 };
